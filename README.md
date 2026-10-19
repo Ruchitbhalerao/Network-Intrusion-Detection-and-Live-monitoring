@@ -68,7 +68,7 @@ pip install -r requirements-dev.txt
 python run.py --live-demo
 ```
 
-Then open **<http://127.0.0.1:5000/>** in your browser and watch alerts appear
+Then open **<http://127.0.0.1:5001/>** in your browser and watch alerts appear
 within a few seconds. Press `Ctrl+C` to stop.
 
 > **Python version.** The project targets **Python 3.12** but also runs on
@@ -141,21 +141,40 @@ demos and presentations.
 ### 3. Real packet capture
 
 ```bash
-sudo python run.py --capture
+# see which interfaces are available (no sudo needed)
+python run.py --list-interfaces
+
+# capture real traffic on the default interface (en0 on most Macs)
+sudo .venv/bin/python run.py --capture
+
+# or pin a specific interface
+sudo .venv/bin/python run.py --capture --interface en0
 ```
 
-Sniffs real packets through `nids/capture.py`. On macOS this usually requires
-root access to `/dev/bpf*` (hence `sudo`). On a normal setup (no monitor mode)
-you will mostly see traffic to and from your own machine, so real alerts may be
-sparse.
+This is the mode that shows **your real network traffic**: open the live portal
+at <http://127.0.0.1:5001/live> and you will see actual TCP/UDP/ICMP — for
+example a Google Meet / video call appears as **UDP** (media over SRTP/QUIC),
+web browsing as TCP, and pings as ICMP.
+
+> `--live-demo` and the default mode do **not** show your real traffic — the demo
+> feed is synthetic (the `10.0.0.x` addresses). Use `--capture` for real packets.
+
+Capture uses `nids/capture.py`. On macOS it requires root access to `/dev/bpf*`
+(hence `sudo`), because raw packet capture is privileged. On a normal host (no
+monitor mode) you mostly see traffic to and from your own machine. Because the
+`known_devices` inventory is empty by default, real capture will flag many
+external IPs as `unknown_device`; add your gateway/known hosts to
+`known_devices` in `config.json`, or disable noisy detectors there, if you only
+want the traffic portal.
 
 ### Options
 
 | Flag | Description |
 | --- | --- |
 | `--live-demo` | Start the synthetic live feed (no privileges). |
-| `--capture` | Start real packet capture (needs root on macOS). |
+| `--capture` | Start **real** packet capture (needs root on macOS). |
 | `--interface <name>` | Network interface to capture on (with `--capture`). |
+| `--list-interfaces` | List interfaces Scapy can see, then exit (no sudo). |
 | `--db <path>` | Use a different SQLite file instead of `nids.db`. |
 
 The flags can be combined. There is also a standalone one-shot demo that writes
@@ -169,7 +188,7 @@ python demo.py
 
 ## Using the dashboard
 
-Open <http://127.0.0.1:5000/>. You will see:
+Open <http://127.0.0.1:5001/>. You will see:
 
 - **Summary cards** — total alerts, tracked devices, and a breakdown by
   severity (high / medium / low).
@@ -216,14 +235,14 @@ holds totals plus peak/average packets- and bytes-per-second.
 Example:
 
 ```bash
-curl -s http://127.0.0.1:5000/api/stats
-curl -s "http://127.0.0.1:5000/api/alerts?limit=5"
-curl -s "http://127.0.0.1:5000/api/traffic?window=60"
+curl -s http://127.0.0.1:5001/api/stats
+curl -s "http://127.0.0.1:5001/api/alerts?limit=5"
+curl -s "http://127.0.0.1:5001/api/traffic?window=60"
 ```
 
 ### Live traffic portal
 
-Open <http://127.0.0.1:5000/live> (linked from the top of the alerts
+Open <http://127.0.0.1:5001/live> (linked from the top of the alerts
 dashboard) for real-time **network monitoring and traffic analysis**: current
 and peak throughput, a bandwidth-over-time chart, the protocol mix, and the top
 talkers. It auto-refreshes every 2 seconds and is populated by whichever live
@@ -293,9 +312,10 @@ tests/                 pytest tests
 
 ## Troubleshooting
 
-- **Port 5000 already in use** — macOS AirPlay Receiver uses port 5000. Turn it
-  off in *System Settings → General → AirDrop & Handoff*, or edit `PORT` in
-  `run.py`.
+- **Port already in use** — the app defaults to port **5001** precisely because
+  macOS AirPlay Receiver occupies port 5000. If 5001 is also taken, run on any
+  free port: `python run.py --live-demo --port 8000`. (You can also turn AirPlay
+  Receiver off in *System Settings → General → AirDrop & Handoff*.)
 - **`--capture` sees nothing / permission denied** — real capture needs root
   (`sudo python run.py --capture`) and, on normal macOS, only sees your own
   machine's traffic. Use `--live-demo` for a reliable demo.

@@ -25,7 +25,7 @@ from nids.api import create_app
 from nids.config import ConfigError, load_config
 
 HOST = "127.0.0.1"
-PORT = 5000
+PORT = 5001
 
 
 def build_app(db_path=None, config=None):
@@ -57,11 +57,53 @@ def _parse_args(argv=None):
         default=None,
         help="SQLite database path (defaults to the project nids.db).",
     )
+    parser.add_argument(
+        "--host",
+        default=HOST,
+        help=f"Host/IP to bind the web server to (default {HOST}, localhost only).",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=PORT,
+        help=f"Port for the web server (default {PORT}; avoids macOS AirPlay on 5000).",
+    )
+    parser.add_argument(
+        "--list-interfaces",
+        action="store_true",
+        help="List the network interfaces Scapy can see, then exit.",
+    )
     return parser.parse_args(argv)
+
+
+def _default_iface():
+    try:
+        from scapy.all import conf
+        return str(conf.iface)
+    except Exception:
+        return "default"
+
+
+def _list_interfaces():
+    """Print the interfaces Scapy can see and the default one."""
+    try:
+        from scapy.all import conf, get_if_list
+    except Exception as error:
+        print(f"Could not load Scapy to list interfaces: {error}")
+        return 1
+    print("Available network interfaces:")
+    for name in get_if_list():
+        print(f"  - {name}")
+    print(f"Default (used when --interface is omitted): {conf.iface}")
+    return 0
 
 
 def main(argv=None):
     args = _parse_args(argv)
+
+    if args.list_interfaces:
+        return _list_interfaces()
+
     try:
         config = load_config()
     except ConfigError as error:
@@ -91,17 +133,21 @@ def main(argv=None):
         except CaptureError as error:
             print(f"Could not start packet capture: {error}")
             print("Live capture usually needs root (e.g. sudo) to read /dev/bpf*.")
+            print("Tip: run 'python run.py --list-interfaces' to see interfaces.")
             return 1
-        print("Live packet capture started.")
+        iface = args.interface or config["capture"].get("interface") or _default_iface()
+        print(f"Live packet capture started on interface: {iface}")
+        print("Showing real traffic to/from this machine (e.g. Google Meet appears as UDP).")
 
-    print(f"Network Intrusion Detection dashboard: http://{HOST}:{PORT}/")
+    print(f"Network Intrusion Detection dashboard: http://{args.host}:{args.port}/")
+    print(f"Live traffic portal:                   http://{args.host}:{args.port}/live")
     if feed is None and capture is None:
         print("Press Ctrl+C to stop. Live packet capture is not started.")
     else:
         print("Press Ctrl+C to stop.")
 
     try:
-        app.run(host=HOST, port=PORT, debug=False)
+        app.run(host=args.host, port=args.port, debug=False)
     finally:
         if feed is not None:
             feed.stop()

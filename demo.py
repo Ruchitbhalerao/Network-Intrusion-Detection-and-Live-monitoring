@@ -105,9 +105,9 @@ def main(db_path=DEMO_DB_PATH):
     print("\nTo view them on the dashboard, run:")
     print(
         "  .venv/bin/python -c \"from run import build_app; "
-        f"build_app(db_path='{db_path}').run(host='127.0.0.1', port=5000)\""
+        f"build_app(db_path='{db_path}').run(host='127.0.0.1', port=5001)\""
     )
-    print("Then open http://127.0.0.1:5000/ in your browser.")
+    print("Then open http://127.0.0.1:5001/ in your browser.")
     print(f"\nTo remove the demo database afterwards: rm -f {db_path}")
     return 0
 
