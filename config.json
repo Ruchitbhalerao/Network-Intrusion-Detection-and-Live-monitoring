@@ -1,0 +1,40 @@
+{
+  "capture": {
+    "enabled": false,
+    "interface": null,
+    "packet_limit": 0,
+    "timeout_seconds": 0
+  },
+  "port_scan": {
+    "enabled": true,
+    "window_seconds": 10,
+    "unique_ports_threshold": 20
+  },
+  "traffic_anomaly": {
+    "enabled": true,
+    "window_seconds": 5,
+    "packet_rate_threshold": 200
+  },
+  "arp_anomaly": {
+    "enabled": true
+  },
+  "unknown_device": {
+    "enabled": true
+  },
+  "repeated_connections": {
+    "enabled": true,
+    "window_seconds": 30,
+    "attempts_threshold": 10
+  },
+  "dedup": {
+    "window_seconds": 60
+  },
+  "traffic_monitor": {
+    "enabled": true,
+    "retention_seconds": 900,
+    "default_window_seconds": 60,
+    "max_window_seconds": 900,
+    "top_talkers": 5
+  },
+  "known_devices": []
+}

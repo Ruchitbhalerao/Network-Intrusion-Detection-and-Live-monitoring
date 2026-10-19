@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Network Intrusion Detection and Threat Monitoring System</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .demo-banner {
+        background: #12314f;
+        color: #fff;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 3px solid #ffbf47;
+        text-align: center;
+      }
+      .demo-banner strong { color: #ffbf47; }
+      .demo-banner a {
+        color: #fff;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="demo-banner" role="note">
+      <span><strong>Static demo</strong> &mdash; sample data, no live backend.</span>
+      <span>
+        The real app is a Flask + SQLite server.
+        <a href="https://github.com/vizzie8/Network-Intrusion-Detection">
+          View the repository &amp; run it locally &rarr;
+        </a>
+      </span>
+    </div>
+
+    <header class="site-header">
+      <h1>Network Intrusion Detection and Threat Monitoring System</h1>
+      <p class="subtitle">
+        Monitors traffic, flags possible suspicious patterns, and stores the
+        resulting events. Detections are possible activity, never proof of an
+        attack.
+      </p>
+    </header>
+
+    <main id="main">
+      <section class="toolbar" aria-label="Status and refresh">
+        <p id="status" class="status status-ok" role="status" aria-live="polite">
+          Sample data loaded
+        </p>
+        <div class="toolbar-actions">
+          <span id="last-updated" class="last-updated"></span>
+          <button id="refresh" type="button">Refresh</button>
+        </div>
+      </section>
+
+      <section class="cards" aria-labelledby="summary-heading">
+        <h2 id="summary-heading" class="visually-hidden">Summary</h2>
+        <article class="card">
+          <h3>Total alerts</h3>
+          <p class="card-value" id="total-alerts">&mdash;</p>
+        </article>
+        <article class="card">
+          <h3>Tracked devices</h3>
+          <p class="card-value" id="tracked-devices">&mdash;</p>
+        </article>
+        <article class="card">
+          <h3>Alerts by severity</h3>
+          <ul id="severity-counts" class="severity-list">
+            <li class="muted">Loading&hellip;</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="panel" aria-labelledby="alerts-heading">
+        <h2 id="alerts-heading">Recent alerts</h2>
+        <div class="table-wrap">
+          <table>
+            <caption class="visually-hidden">Most recent security alerts</caption>
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Severity</th>
+                <th scope="col">Type</th>
+                <th scope="col">Source IP</th>
+                <th scope="col">Destination IP</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody id="alerts-body">
+              <tr>
+                <td colspan="6" class="empty">Loading&hellip;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="devices-heading">
+        <h2 id="devices-heading">Tracked devices</h2>
+        <div class="table-wrap">
+          <table>
+            <caption class="visually-hidden">
+              Devices observed on the monitored network
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">IP</th>
+                <th scope="col">MAC</th>
+                <th scope="col">Hostname</th>
+                <th scope="col">Label</th>
+                <th scope="col">Known</th>
+                <th scope="col">Last seen</th>
+              </tr>
+            </thead>
+            <tbody id="devices-body">
+              <tr>
+                <td colspan="6" class="empty">Loading&hellip;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Possible suspicious activity only. Monitor only networks you own or are
+        authorized to monitor. This page is a static demonstration with sample
+        data; see the
+        <a href="https://github.com/vizzie8/Network-Intrusion-Detection">repository</a>
+        to run the real-time dashboard locally.
+      </p>
+    </footer>
+
+    <script src="demo.js"></script>
+  </body>
+</html>

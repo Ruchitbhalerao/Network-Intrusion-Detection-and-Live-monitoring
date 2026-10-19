@@ -1,0 +1,8 @@
+# Runtime dependencies for the Network Intrusion Detection and Threat
+# Monitoring System. Keep this list as small as possible.
+#
+# Versions are intentionally unpinned for now. After the first successful
+# install in the project virtual environment (Stage 0), we will record the
+# exact working versions here so the setup is reproducible.
+Flask
+scapy
